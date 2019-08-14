@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.2</version>
+    <version>2.0.3</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,8 +16,8 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2014-05-27</date>
-    <time>10:29:14</time>
+    <date>2014-05-28</date>
+    <time>11:50:42</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
@@ -68,7 +68,7 @@
                         <file name="PaymentController.php" hash="e00d81b479dd16a68b90a71cc810bf92"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="e6bb8b50f799aca2d4e61887216b07de"/>
+                        <file name="config.xml" hash="e112060663639f8c09be134e0e49e7af"/>
                         <file name="system.xml" hash="28993e0c9c79829b12cbcea209967be4"/>
                     </dir>
                     <dir name="lib">
@@ -112,7 +112,7 @@
         </target>
         <target name="mageskin">
             <dir name="frontend">
-                <dir name="default">
+                <dir name="base">
                     <dir name="default">
                         <dir name="images">
                             <file name="trustly-big.png" hash="ace4a2fcd8306b7e5835076340c7877b"/>
