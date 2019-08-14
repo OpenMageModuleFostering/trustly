@@ -3,7 +3,7 @@
     <modules>
         <Trustly_Trustly>
             <active>true</active>
-            <codePool>community</codePool>
+            <codePool>local</codePool>
             <depends>
                 <Mage_Payment/>
             </depends>

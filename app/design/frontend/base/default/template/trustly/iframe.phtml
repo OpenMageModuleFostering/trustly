@@ -1,7 +1,7 @@
 <div class="page-title">
-    <h1><?php echo Mage::helper('trustly')->__('Instant bank payment. Free. No registration.') ?></h1>
+    <h1><?php echo Mage::helper('trustly')->__('Direct bank e-Payments') ?></h1>
 </div>
-<p class="trustly_image"><img src="https://static.trustly.com/logotype/footer/trustly_140.png" alt="Trustly" /><p>
+<p class="trustly_image"><img src="<?php echo $this->getSkinUrl('images/trustly-big.png'); ?>" alt="Trustly" /><p>
 
 <?php if (!$this->getIframe()): ?>
 <p class="note-msg"><?php echo Mage::helper('trustly')->__('Failed to display the payment method.') ?></p>
