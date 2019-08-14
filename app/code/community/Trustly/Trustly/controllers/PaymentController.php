@@ -702,4 +702,4 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 		return false;
 	}
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */

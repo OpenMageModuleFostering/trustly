@@ -4,7 +4,7 @@
         <payment>
             <groups>
                 <trustly translate="label" module="trustly">
-                    <label>Trustly - Direct banking</label>
+                    <label>Trustly - Instant bank payment</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>

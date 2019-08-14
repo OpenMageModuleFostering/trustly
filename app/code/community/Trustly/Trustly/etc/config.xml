@@ -105,7 +105,7 @@
             <trustly>
                 <active>0</active>
                 <model>trustly/standard</model>
-                <title>Trustly - Direct banking</title>
+                <title>Trustly - Instant bank payment</title>
                 <urltrustly>0</urltrustly>
                 <allowspecific>0</allowspecific>
                 <sendmailorderconfirmation>1</sendmailorderconfirmation>

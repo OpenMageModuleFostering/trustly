@@ -225,9 +225,14 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 			$orderMapping = Mage::getModel('trustly/ordermappings');
 			$omData = array(
 				'trustly_order_id' => $trustlyOrderId,
-				'magento_increment_id' => $incrementId,
-				'datestamp' => Varien_Date::now(),
+				'magento_increment_id' => $incrementId
 			);
+			/* Varien_Date::now() does not exist in Magento 1.5 */
+			if(function_exists('Varien_Date::now')) {
+				$omData['datestamp'] = Varien_Date::now();
+			} else {
+				$omData['datestamp'] = now();
+			}
 			$orderMapping->setData($omData);
 			$orderMapping->save();
 			Mage::log("Saved mapping between Trustly orderid $trustlyOrderId and increment id $incrementId", Zend_Log::INFO, self::LOG_FILE);
@@ -253,4 +258,4 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 		return false;
 	}
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */

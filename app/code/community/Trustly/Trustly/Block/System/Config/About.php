@@ -36,4 +36,4 @@ class Trustly_Trustly_Block_System_Config_About extends Mage_Adminhtml_Block_Abs
         return $html;
     }
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */

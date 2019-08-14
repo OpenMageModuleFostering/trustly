@@ -54,4 +54,4 @@ class Trustly_Trustly_Model_Ordermappings extends Mage_Core_Model_Abstract
 		return $this->getResource()->unlockIncrementAfterProcessing($incrementId, $lockid);
 	}
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */

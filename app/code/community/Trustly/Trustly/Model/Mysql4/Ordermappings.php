@@ -70,4 +70,4 @@ class Trustly_Trustly_Model_Mysql4_Ordermappings extends Mage_Core_Model_Mysql4_
 		return TRUE;
 	}
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */

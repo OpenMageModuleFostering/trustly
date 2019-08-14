@@ -45,4 +45,4 @@ class Trustly_Trustly_Block_Form extends Mage_Payment_Block_Form
 	}
 
 }
-/* vim: set noet cindent ts=4 ts=4 sw=4: */
+/* vim: set noet cindent sts=4 ts=4 sw=4: */
