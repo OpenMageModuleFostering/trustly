@@ -7,4 +7,14 @@
             </action>
         </reference>
     </trustly_payment_redirect>
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addCss"><link>css/trustly.css</link></action>
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_billing>
+        <reference name="head">
+            <action method="addCss"><link>css/trustly.css</link></action>
+        </reference>
+    </checkout_onepage_billing>
 </layout>

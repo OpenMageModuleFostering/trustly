@@ -23,6 +23,7 @@
 "Payment amount: %s %s","Betalings beløp: %s %s"
 "Payment failed, debit received.","Betalingen mislyktes, debet er mottatt."
 "Pending payment.","Utestående betaling."
+"Trustly - Instant bank payment", "Trustly - Omgående bankbetaling"
 "Trustly order has been canceled.","Trustly ordre er kansellert"
 "Trustly orderid: %s","Trustly ordreid: %s"
 "Trustly payment module has not been configured.","Trustly betaling modul er ikke konfigurert enda."

@@ -187,14 +187,18 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 
 		$successurl = Mage::getUrl('trustly/payment/success');
 		$failurl = Mage::getUrl('trustly/payment/fail');
+		$amount = Mage::helper('trustly')->getOrderAmount($order);
+		$currency = Mage::helper('trustly')->getOrderCurrencyCode($order);
+
+		Mage::log(sprintf("Creating order of %s %s for %s orderid %s", $amount, $currency, $endUserId, $order->getRealOrderId()), Zend_Log::DEBUG, self::LOG_FILE);
 
 		$response = $api->deposit(
 			$notificationUrl,
 			$endUserId,
 			$messageId,
 			Mage::app()->getLocale()->getLocaleCode(),
-			Mage::helper('trustly')->getOrderAmount($order),
-			Mage::helper('trustly')->getOrderCurrencyCode($order),
+			$amount,
+			$currency,
 			$countryId,
 			$billingAddress->getTelephone(),
 			$order->getCustomerFirstname(),
@@ -210,6 +214,7 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 			NULL, //SuggestedMaxAmount
 			$versionString
 		);
+
 
 		if (!isset($response)) {
 			Mage::log("Could not connect to Trustly (no response)", Zend_Log::WARN, self::LOG_FILE);

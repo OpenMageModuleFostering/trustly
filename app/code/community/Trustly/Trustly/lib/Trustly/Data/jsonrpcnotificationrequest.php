@@ -27,11 +27,25 @@ class Trustly_Data_JSONRPCNotificationRequest extends Trustly_Data {
 	var $notification_body = NULL;
 
 	public function __construct($notification_body) {
+		parent::__construct();
 
 		$this->notification_body = $notification_body;
+
+		if(empty($notification_body)) {
+			throw new Trustly_DataException('Empty notification body');
+		}
+
 		$payload = json_decode($notification_body, TRUE);
 
-		parent::__construct($payload);
+		if(is_null($payload)) {
+			$error = '';
+			if(function_exists('json_last_error_msg')) {
+				$error = ': ' . json_last_error_msg();
+			}
+			throw new Trustly_DataException('Failed to parse JSON' . $error);
+		}
+
+		$this->payload = $payload;
 
 		if($this->getVersion() != '1.1') {
 			throw new Trustly_JSONRPCVersionException('JSON RPC Version '. $this->getVersion() .'is not supported');

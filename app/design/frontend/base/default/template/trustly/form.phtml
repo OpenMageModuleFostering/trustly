@@ -1,8 +1,8 @@
+<?php $_code=$this->getMethodCode() ?>
 <fieldset class="form-list">
-	<?php $_code=$this->getMethodCode() ?>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none;">
+        <li class="trustly-logo"><img src="https://static.trustly.com/logotype/checkout/trustly_150.png" alt="<?php echo Mage::helper('trustly')->__('Trustly') ?>"/>&nbsp;</li>
+        <li class="trustly-text"><?php echo $this->helper('trustly')->__('Instant online banking payment. Supports all banks. Free of charge. Use your regular bank login.') ?></li>
+        <li class="trustly-whatis"><a href="<?php echo $this->getPaymentAcceptanceMarkHref()?>" onclick="javascript:window.open('<?php echo $this->getPaymentAcceptanceMarkHref()?>','whatistrustly','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, ,left=0, top=0, width=970, height=725'); return false;"><?php echo Mage::helper('trustly')->__('What is Trustly?') ?></a></li>
+    </ul>
 </fieldset>
-<div id="payment_form_<?php echo $_code ?>" style="display:none;">
-    <p class="trustly_title" style="padding-left: 20px; padding-top: 8px; ">
-        <?php echo $this->helper('trustly')->__('Instant online banking payment. Supports all banks. Free of charge. Use your regular bank login.') ?>
-    </p>
-</div>

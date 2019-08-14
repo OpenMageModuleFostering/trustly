@@ -23,6 +23,7 @@
 "Payment amount: %s %s", "Cantidad transferida: %s %s"
 "Payment failed, debit received.","Error en el pago, abono recibido."
 "Pending payment.","Pago pendiente."
+"Trustly - Instant bank payment", "Trustly - Pago inmediato"
 "Trustly order has been canceled.", "Para Trustly ha sido cancelada."
 "Trustly orderid: %s","Trustly orderid: %s"
 "Trustly payment module has not been configured.","El módulo de pago de Trustly no se ha configurado."

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.12</version>
+    <version>2.0.16</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,33 +16,78 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2015-03-30</date>
-    <time>10:51:35</time>
+    <date>2015-07-14</date>
+    <time>11:11:27</time>
     <contents>
         <target name="magelocale">
+            <dir name="bg_BG">
+                <file name="Trustly_Trustly.csv" hash="225a52365b69e73876089fe536ae7222"/>
+            </dir>
+            <dir name="cs_CZ">
+                <file name="Trustly_Trustly.csv" hash="fea04a45a8d2fe98ff1227d090f5bbf5"/>
+            </dir>
             <dir name="da_DK">
-                <file name="Trustly_Trustly.csv" hash="aa7575d1864e3c170de228d4fa75c229"/>
+                <file name="Trustly_Trustly.csv" hash="89b0a13ce30d7caddf103289debd6d1f"/>
+            </dir>
+            <dir name="de_DE">
+                <file name="Trustly_Trustly.csv" hash="cc2c66739284ff61809b644c4d7d6518"/>
+            </dir>
+            <dir name="el_GR">
+                <file name="Trustly_Trustly.csv" hash="6964395a9e72276e11426c2ccd80f955"/>
             </dir>
             <dir name="en_US">
-                <file name="Trustly_Trustly.csv" hash="fe6921283721d8c6b8997f1c9a7b7371"/>
+                <file name="Trustly_Trustly.csv" hash="d9a7372cf92c1b19352d5939901f7797"/>
             </dir>
             <dir name="es_ES">
-                <file name="Trustly_Trustly.csv" hash="7f514be9aa9464b2453d6e07680a602a"/>
+                <file name="Trustly_Trustly.csv" hash="be7302b16528006cf71ab75d7c166984"/>
             </dir>
             <dir name="et_EE">
-                <file name="Trustly_Trustly.csv" hash="88c537233c244dd3cc56ea0de17ed259"/>
+                <file name="Trustly_Trustly.csv" hash="2dbb3f363efe67e035e8e7f8924c5117"/>
             </dir>
             <dir name="fi_FI">
-                <file name="Trustly_Trustly.csv" hash="206f9edc661ec84821f445baf67c182c"/>
+                <file name="Trustly_Trustly.csv" hash="0227c7abdad00c44145f84cc934edd7d"/>
+            </dir>
+            <dir name="fr_FR">
+                <file name="Trustly_Trustly.csv" hash="b47d303a645d5ed1293d4a1d462f59f1"/>
+            </dir>
+            <dir name="ga_IE">
+                <file name="Trustly_Trustly.csv" hash="7e2b099c5e1dd4441d701a1cd41a2790"/>
+            </dir>
+            <dir name="it_IT">
+                <file name="Trustly_Trustly.csv" hash="9f7ca6efbdd820177dc3a5d521771287"/>
+            </dir>
+            <dir name="lt_LT">
+                <file name="Trustly_Trustly.csv" hash="64cad3460f1421dd65bc9ec91c0a26e1"/>
+            </dir>
+            <dir name="lv_LV">
+                <file name="Trustly_Trustly.csv" hash="329433e081d78a56d39a4ba480497670"/>
+            </dir>
+            <dir name="mt_MT">
+                <file name="Trustly_Trustly.csv" hash="55f4fd934eb87f5a8d28e112fe9fdd25"/>
             </dir>
             <dir name="nb_NO">
-                <file name="Trustly_Trustly.csv" hash="5c8ca8d390b57d01e4263d165ed5aaf2"/>
+                <file name="Trustly_Trustly.csv" hash="1911dd904a1647b519c0d4969a5f66fa"/>
+            </dir>
+            <dir name="nl_NL">
+                <file name="Trustly_Trustly.csv" hash="296dbe477091d29467687ad10fc8687f"/>
             </dir>
             <dir name="pl_PL">
-                <file name="Trustly_Trustly.csv" hash="27e5174213fd321aa0ae5ee7cbbc575d"/>
+                <file name="Trustly_Trustly.csv" hash="1fc964f36bda1d22798304cdd8146e37"/>
+            </dir>
+            <dir name="pt_PT">
+                <file name="Trustly_Trustly.csv" hash="0d7f239f4c7307625bc54cf567b3e2af"/>
+            </dir>
+            <dir name="ro_RO">
+                <file name="Trustly_Trustly.csv" hash="496a438e312ad6c958479f595dab35f1"/>
+            </dir>
+            <dir name="sk_SK">
+                <file name="Trustly_Trustly.csv" hash="5d07aa5fbe8b9cab06784ee3fa3ce3d2"/>
+            </dir>
+            <dir name="sl_SI">
+                <file name="Trustly_Trustly.csv" hash="dac997521022da3a1630be59a3c869eb"/>
             </dir>
             <dir name="sv_SE">
-                <file name="Trustly_Trustly.csv" hash="7de5f07ea934b3b2c22cb27b7197720d"/>
+                <file name="Trustly_Trustly.csv" hash="9a062e9f0d031556fd8a65033d42f075"/>
             </dir>
         </target>
         <target name="magecommunity">
@@ -54,7 +99,7 @@
                                 <file name="About.php" hash="718a3e0e730ee688077363403f30b60e"/>
                             </dir>
                         </dir>
-                        <file name="Form.php" hash="a65f1b111fde8a0fe0a57427b5cd7e38"/>
+                        <file name="Form.php" hash="37a867c050ee978080d45907948ba7fc"/>
                         <file name="Redirect.php" hash="83601b40dbb62de16aad76eaa0374b16"/>
                     </dir>
                     <dir name="Helper">
@@ -65,13 +110,13 @@
                             <file name="Ordermappings.php" hash="2646cf5a89931567877c586f69b605cb"/>
                         </dir>
                         <file name="Ordermappings.php" hash="53b9f4afef2fb240d35528f06c5e3c19"/>
-                        <file name="Standard.php" hash="be676893109e766431dd8075377aceb4"/>
+                        <file name="Standard.php" hash="9879016b8eb12ecd59b5f2206d3197df"/>
                     </dir>
                     <dir name="controllers">
-                        <file name="PaymentController.php" hash="e18d29bad284fba48e21f23f0970c407"/>
+                        <file name="PaymentController.php" hash="e144f60ec9c61e2477b11199412e69cb"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="bb6b558e932db1cee5bc43b39acd9641"/>
+                        <file name="config.xml" hash="dfbdbc89e0933d51cb1812571edfa379"/>
                         <file name="system.xml" hash="1d05a6c9e2698de58e9f86ed172a8d43"/>
                     </dir>
                     <dir name="lib">
@@ -82,23 +127,23 @@
                                     <file name="trustly.com.public.pem" hash="b2c821ad10c085a40b6c4e36ee6b8c9e"/>
                                 </dir>
                                 <file name="api.php" hash="36d19f4adb8150687911b9faf3a56923"/>
-                                <file name="signed.php" hash="a7bbd8708169d0f7021d90ede76694f7"/>
-                                <file name="unsigned.php" hash="949ef7542850d212eb3147368bf02070"/>
+                                <file name="signed.php" hash="d8aaa789cc8140c70aab17d0c52b2f9c"/>
+                                <file name="unsigned.php" hash="7d5b664736bc717488af6924cbf1ded5"/>
                             </dir>
                             <dir name="Data">
-                                <file name="data.php" hash="7fbe26e12fd5df330f9172ff4ca1465b"/>
-                                <file name="jsonrpcnotificationrequest.php" hash="eb9276016f46c497b27cbbd5a2daeed8"/>
-                                <file name="jsonrpcnotificationresponse.php" hash="7783639307db8f310808dfc15d2a3d59"/>
+                                <file name="data.php" hash="3b4f8d6a754078323de3fc178558d1b9"/>
+                                <file name="jsonrpcnotificationrequest.php" hash="96bfc92ab112e26091881c5a09febc95"/>
+                                <file name="jsonrpcnotificationresponse.php" hash="8e03d52bf9c1e72aa62eaf8d6327640e"/>
                                 <file name="jsonrpcrequest.php" hash="757d93b0b5957a8593a3d70889df106c"/>
                                 <file name="jsonrpcresponse.php" hash="0520907f00771ff37762ebbac6c969dd"/>
                                 <file name="jsonrpcsignedresponse.php" hash="bb858b420fb9d11261a33e6a30337cc0"/>
-                                <file name="request.php" hash="1665da7d553a2ca518de94e2d4280bfe"/>
-                                <file name="response.php" hash="bdc3fb5c03619346dd2131158f2253eb"/>
+                                <file name="request.php" hash="c9d99190941c0e93cdf847b11107a66f"/>
+                                <file name="response.php" hash="de751b9b04eaaede8843b79f1a53592e"/>
                             </dir>
                             <file name="exceptions.php" hash="490d32bc3fe7a4fb9ef6c92aa9dc7ceb"/>
                         </dir>
                         <file name="LICENCE" hash="8713032dd477873c84ed4ff4b7da5f70"/>
-                        <file name="README.md" hash="9a8b951a089ee6cab156bce818f4e1b5"/>
+                        <file name="README.md" hash="fc11bd0f9f42163689381882c878f454"/>
                         <file name="Trustly.php" hash="f3eb105285128246ce17dbec90746a8e"/>
                         <file name="composer.json" hash="ff37bbc26dbeb509061ab2f42e9228e2"/>
                     </dir>
@@ -123,14 +168,24 @@
                 <dir name="base">
                     <dir name="default">
                         <dir name="layout">
-                            <file name="trustly.xml" hash="defb5e5450f4f02d4bf8c53fd7fac3ef"/>
+                            <file name="trustly.xml" hash="a7f926ffe5e9f8cbe59f509258c7fd53"/>
                         </dir>
                         <dir name="template">
                             <dir name="trustly">
-                                <file name="form.phtml" hash="056ea0ceb0b4fb89c5b10e6146b84a9f"/>
+                                <file name="form.phtml" hash="a7b2be50244dacab62d5016ab1d93983"/>
                                 <file name="iframe.phtml" hash="4805a2e6d22d3d9c4df5c05864f09d3a"/>
-                                <file name="mark.phtml" hash="e535d84b06bb079e098e94d4b6430abd"/>
                             </dir>
+                        </dir>
+                    </dir>
+                </dir>
+            </dir>
+        </target>
+        <target name="mageskin">
+            <dir name="frontend">
+                <dir name="base">
+                    <dir name="default">
+                        <dir name="css">
+                            <file name="trustly.css" hash="d41d434f500cec7ea229d8880e88e20d"/>
                         </dir>
                     </dir>
                 </dir>

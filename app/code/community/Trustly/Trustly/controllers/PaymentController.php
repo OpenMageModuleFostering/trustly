@@ -174,7 +174,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			return ;
 		}
 
-		//  Invoming Trustly request
+		//Incoming POST request
 		$httpBody = file_get_contents('php://input');
 
 		try {
@@ -188,6 +188,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 		}
 
 		if(isset($notification)) {
+			$_method = $notification->getMethod();
+			Mage::log(sprintf("Incoming %s notification", $_method), Zend_Log::DEBUG, self::LOG_FILE);
 
 			$standard = Mage::getModel('trustly/standard');
 
@@ -214,12 +216,30 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			}
 
 			if(!$incrementId) {
-				Mage::helper('trustly')->sendResponseNotification($notification, true);
+				Mage::helper('trustly')->sendResponseNotification($notification, false);
 
 				Mage::getSingleton('checkout/session')->addError(Mage::helper('trustly')->__("Cannot find the relation of Trustly orderid %s for user %s.", $trustlyOrderId, $notification->getData('enduserid')));
 				session_write_close();
 
 				Mage::log("Could not find the mapping of Trustly orderid $trustlyOrderId in the incoming notification. incrementid $incrementId Enduser is ".$notification->getData('enduserid'), Zend_Log::WARN, self::LOG_FILE);
+
+				if($_method == 'credit' or $_method == 'debit') {
+					/* For monetary notifications send the admin a critical 
+					 * notice, this means that there is incoming money that 
+					 * will end up in the void somewhere. */
+
+					Mage::getModel('adminnotification/inbox')->add(
+						Mage_AdminNotification_Model_Inbox::SEVERITY_MAJOR,
+						'Unable to find order for Trustly payment',
+						sprintf("Incoming Trustly %s of %s %s cannot be mapped to order in the store. This means that this payment will not be %s:ed to an order and the funds are going nowhere. You should investigate the payment, Trustly OrderId: %s.",
+						$_method,
+						$notification->getData('amount'),
+						$notification->getData('currency'),
+						$_method,
+						$trustlyOrderId
+					));
+
+				}
 
 				return;
 			}
@@ -252,9 +272,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 				return;
 			}
+			Mage::log(sprintf("Magento order loaded for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 
-
-			$_method = $notification->getMethod();
 			$_amount = $notification->getData('amount');
 			$_currency = $notification->getData('currency');
 
@@ -283,6 +302,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			$order_transaction = $trustly_payment->getTransaction($trustlyOrderId);
 			$notification_transaction = NULL;
 			if(isset($order_transaction) && $order_transaction !== FALSE) {
+				Mage::log(sprintf("Successfully found order transaction for trustly orderid %s, increment %s", $trustlyOrderId, $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				$order_trans_children = $order_transaction->getChildTransactions();
 				if(isset($order_trans_children)) {
 					foreach($order_trans_children as $tc) {
@@ -302,6 +322,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 				return ;
 			}
+			Mage::log(sprintf("We have not processed notification %s before, will apply", $trustlyNotificationId), Zend_Log::DEBUG, self::LOG_FILE);
 
 			$order_invoice = NULL;
 			foreach ( $order->getInvoiceCollection() as $invoice) {
@@ -316,6 +337,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				/* We should always have a payment with the trustly method, if
 					* we do not have one, create it we will need this regardless of the method for the notification */
 			if(is_null($trustly_payment) || is_null($trustly_payment->getTxnType())) {
+				Mage::log(sprintf("No previous trustly payment for increment %s, creating one", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 					/* Create a payment with our TrustlyOrderId as the
 						* TransactionId, we will later add the current
 						* notification as a child payment for this payment */
@@ -328,6 +350,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$transactionSave->addObject($order_transaction)
 					->addObject($trustly_payment);
 			}
+			Mage::log(sprintf("Pre-processing done, applying method dependent processing for increment %s, method %s", $incrementId, $_method), Zend_Log::DEBUG, self::LOG_FILE);
 
 				# Check to see if we have invoiced this order already, if
 				# so do not do it again. We might be getting the same
@@ -338,6 +361,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			} elseif(($_method == 'pending' || $_method == 'credit') && !isset($order_invoice)) {
 				if($_method == 'credit') {
 					Mage::log(sprintf("Recieved a %s notification, no previous invoice could be found for Trustly orderid %s, magento order %s. No pending notification send before?! Creating one now", $_method, $trustlyOrderId, $incrementId), Zend_Log::WARN, self::LOG_FILE);
+				} else {
+					Mage::log(sprintf("Recieved a %s notification, no previous invoice could be found for Trustly orderid %s, magento order %s", $_method, $trustlyOrderId, $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				}
 
 					/* A credit notification without an invoice can mean one of two
@@ -357,23 +382,27 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					->addComment(Mage::helper('trustly')->__("Invoiced from Trustly payment"))
 					->register();
 
+				Mage::log(sprintf("Invoice prepared for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				$order->addRelatedObject($order_invoice);
 				$trustly_payment->setCreatedInvoice($order_invoice);
 
 				$comment = Mage::helper('trustly')->__('Pending payment.');
 				$comment .= '<br />' . Mage::helper('trustly')->__('Invoice for Trustly OrderId #%s created', $trustlyOrderId);
+				Mage::log(sprintf("Invoice created for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 
 				$orderStatus = Mage_Sales_Model_Order::STATE_PENDING_PAYMENT;
 
+				Mage::log(sprintf("Setting order state to STATE_PENDING_PAYMENT for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				$order->setState($orderStatus, true, $comment, false);
 
+				Mage::log(sprintf("Adding order invoice for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				$transactionSave->addObject($order_invoice)
 					->addObject($order)
 					->addObject($trustly_payment);
 
 				$trustly_payment->unsCreatedInvoice();
 
-				Mage::log(sprintf("Recieved %s notification for order with increment %s for orderid %s", $_method, $incrementId, $trustlyOrderId), Zend_Log::INFO, self::LOG_FILE);
+				Mage::log(sprintf("Recieved %s notification for order with increment %s for orderid %s, invoice created and applied. Order now in pending payment", $_method, $incrementId, $trustlyOrderId), Zend_Log::INFO, self::LOG_FILE);
 
 				if (((int)Mage::getModel('trustly/standard')->getConfigData('sendmailorderconfirmation')) == 1) {
 					Mage::log('Sending new order email', Zend_Log::DEBUG, self::LOG_FILE);
@@ -386,6 +415,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					/* We have no authorize for the payment (As we would simply
 						* abort if we have gotten the pending before) so create
 						* an authorization for the payment here and append */
+				Mage::log(sprintf('Adding child AUTHORIZATION transaction for increment %s for this notificationid %s, trustly orderid %s', $incrementId, $trustlyNotificationId, $trustlyOrderId), Zend_Log::DEBUG, self::LOG_FILE);
 				$notification_transaction = $this->addChildTransaction($trustly_payment,
 					$trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH, true);
@@ -393,6 +423,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$transactionSave->addObject($notification_transaction)
 					->addObject($trustly_payment);
 			} elseif($_method == 'credit') {
+				Mage::log(sprintf("Verifying order amounts for increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				/**
 				 *  verify the amount sent and the currency_code, to prevent improper payments
 				 */
@@ -423,6 +454,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 					return;
 				}
+				Mage::log(sprintf("Amount is valid payment of increment %s", $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 
 				$trustly_payment->setAmountCharged($_amount);
 				$order->setIsInProcess(true);
@@ -434,6 +466,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$comment .= "<br />" . Mage::helper('trustly')->__('Notification id: %s', $notification->getData('notificationid'));
 				$comment .= "<br />" . Mage::helper('trustly')->__('Payment amount: %s %s', $_amount, $_currency);
 
+				Mage::log(sprintf('Adding child CAPTURE transaction for increment %s for this notificationid %s, trustly orderid %s', $incrementId, $trustlyNotificationId, $trustlyOrderId), Zend_Log::DEBUG, self::LOG_FILE);
 				/* Funds are credited to merchant account, we call this captured */
 				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE, true);
@@ -443,10 +476,24 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				 * only one */
 				$open = Mage_Sales_Model_Order_Invoice::STATE_OPEN;
 				if ($order_invoice->getState() == $open && Mage::helper('trustly')->getOrderAmount($order_invoice) == $_amount) {
-					$trustly_payment->capture($order_invoice);
+					Mage::log(sprintf('Found open order invoice for this amount for increment %s, capturing', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
+					try {
+						$trustly_payment->capture($order_invoice);
+						Mage::log(sprintf('Invoice captured for increment %s', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
+					} catch(Exception $e) {
+						Mage::log(sprintf('Failed to capture invoice %s for increment %s: %s', $order_invoice->getIncrementId(), $incrementId, (string)$e), Zend_Log::ERROR, self::LOG_FILE);
+
+						/* We failed in processing this notification. Signal this and return here. */
+						Mage::helper('trustly')->sendResponseNotification($notification, false);
+						$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
+						return;
+					}
+
 					if ($order_invoice->getIsPaid()) {
+						Mage::log(sprintf('Paying invoice for increment %s', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 						$order_invoice->pay();
 					}
+					Mage::log(sprintf('Setting invoice transactionid to %s for increment %s', $trustlyOrderId, $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 						/* Set the transaction ID again here, if we fiddle with
 							* the invoice it will change the txnid to this
 							* transaction otherwise */
@@ -470,6 +517,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 						Zend_Log::WARN, self::LOG_FILE);
 				}
 
+				Mage::log(sprintf('Setting order state to PROCESSING for increment %s', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 				$orderStatus = Mage_Sales_Model_Order::STATE_PROCESSING;
 				$order->setState($orderStatus, true, $comment, false);
 
@@ -478,7 +526,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					->addObject($trustly_payment);
 
 
-				Mage::log("Recieved payment for order with increment $incrementId", Zend_Log::INFO, self::LOG_FILE);
+				Mage::log("Recieved payment for order with increment $incrementId, order is now PROCESSING", Zend_Log::INFO, self::LOG_FILE);
 
 			}elseif($_method == 'debit') {
 				$comment = Mage::helper('trustly')->__('Payment failed, debit received.');
@@ -517,19 +565,46 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				 * debit notification, in the debit notification we handle the
 				 * montary changeback and cancel of the invoices */
 
+				Mage::log(sprintf('Adding child VOID transaction for increment %s for this notificationid %s, trustly orderid %s', $incrementId, $trustlyNotificationId, $trustlyOrderId), Zend_Log::DEBUG, self::LOG_FILE);
 				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_VOID, true);
 
-				$order->cancel();
+				if(isset($order_invoice) and $order_invoice->getIsPaid()) {
+					/* If our invoice has been marked as paid and we get a 
+					 * cancel notification this is likely a rouge notification. 
+					 * Trustly systems does not send cancel if a credit has 
+					 * been sent, it will only cancel non-credited orders. I.e. 
+					 * this is a paid invoice and the cancel was likely created 
+					 * before this credit. So do not cancel the order.  */
 
-				$transactionSave->addObject($order)
-					->addObject($trustly_payment);
+					Mage::log("Recieved cancel for order with increment $incrementId, but our invoice for this order is already paid. NOT canceling order.", Zend_Log::INFO, self::LOG_FILE);
+				} else {
+					Mage::log(sprintf('Cancelling order increment %s', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
+					try {
+						if(isset($order_invoice)) {
+							Mage::log(sprintf('Cancelling unpaid invoice %s for order increment %s', $order_invoice->getIncrementId(), $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
+							$order_invoice->cancel();
+						}
+						$order->cancel();
+					} catch(Exception $e) {
+						Mage::log(sprintf('Failed to cancel order increment %s: %s', $incrementId, (string)$e), Zend_Log::ERROR, self::LOG_FILE);
 
-				Mage::log("Recieved cancel for order with increment $incrementId", Zend_Log::INFO, self::LOG_FILE);
+						/* We failed in processing this notification. Signal this and return here. */
+						Mage::helper('trustly')->sendResponseNotification($notification, false);
+						$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
+						return;
+					}
+
+					$transactionSave->addObject($order)
+						->addObject($trustly_payment);
+
+					Mage::log("Recieved cancel for order with increment $incrementId, order is now cancelled", Zend_Log::INFO, self::LOG_FILE);
+				}
 			}
 
 			if(isset($notification_transaction)) {
 				if($notification_transaction->getShouldCloseParentTransaction()) {
+					Mage::log("Closing parent payment transaction for order with increment $incrementId", Zend_Log::INFO, self::LOG_FILE);
 
 					$parent_transaction = Mage::getModel('sales/order_payment_transaction')
 						->setOrderPaymentObject($trustly_payment)
@@ -544,10 +619,12 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				}
 			}
 
+			Mage::log("COMMIT(); $incrementId", Zend_Log::DEBUG, self::LOG_FILE);
 			$transactionSave->save();
 			Mage::helper('trustly')->sendResponseNotification($notification, true);
 
 			$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
+			Mage::log(sprintf('Increment %s unlocked, notification processing done', $incrementId), Zend_Log::DEBUG, self::LOG_FILE);
 		}
 	}
 
@@ -605,7 +682,10 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 	public function cancelCheckoutOrder()
 	{
 		$session = Mage::getSingleton('checkout/session');
+		$ordermapping = Mage::getModel('trustly/ordermappings');
 
+		$increment_lockid = NULL;
+		$incrementid = NULL;
 		try {
 			$orderId = $session->getLastOrderId();
 			Mage::log("Attempting to cancel order $orderId", Zend_Log::DEBUG, self::LOG_FILE);
@@ -618,8 +698,23 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 			if ($order && $order->getId() && $order->getQuoteId() == $sess_quoteid) {
 				$incrementid = $order->getIncrementId();
+
+				for($i = 0; $i < 10; $i++) {
+					$increment_lockid = $ordermapping->lockIncrementForProcessing($incrementid);
+					if($increment_lockid === false) {
+						/* If we cannot lock this increment abort now, retry as this is a user interactive process */
+						Mage::log("Attempt to process already locked magento increment $incrementid, will retry up to 10s", Zend_Log::DEBUG, self::LOG_FILE);
+						sleep(1);
+					} else {
+						break;
+					}
+				}
+				if($increment_lockid === false) {
+					throw new Mage_Payment_Model_Info_Exception("Cannot lock the increment $incrementid after 10s, cannot cancel this order");
+				}
+
 				$order->cancel()->save();
-				Mage::log("Cancel order $orderId, incrementid $incrementid", Zend_Log::INFO, self::LOG_FILE);
+				Mage::log("Cancelled order $orderId, incrementid $incrementid", Zend_Log::INFO, self::LOG_FILE);
 
 				$session->unsTrustlyQuoteId();
 				$session->unsTrustlyIncrementId();
@@ -637,16 +732,27 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 		} catch (Mage_Core_Exception $e) {
 			Mage::log("Got Mage_Core_Exception when cancelling order: " . $e->getMessage(), Zend_Log::WARN, self::LOG_FILE);
 			$session->addError($e->getMessage());
+
+			if(isset($increment_lockid)) {
+				$ordermapping->unlockIncrementAfterProcessing($incrementid, $increment_lockid);
+			}
 			return false;
 		} catch (Exception $e) {
 			$session->addError(Mage::helper('trustly')->__('Unable to cancel Trustly order.'));
 			Mage::log("Got Exception when cancelling order: " . $e->getMessage(), Zend_Log::WARN, self::LOG_FILE);
 			Mage::logException($e);
+
+			if(isset($increment_lockid)) {
+				$ordermapping->unlockIncrementAfterProcessing($incrementid, $increment_lockid);
+			}
 			return false;
+		}
+
+		if(isset($increment_lockid)) {
+			$ordermapping->unlockIncrementAfterProcessing($incrementid, $increment_lockid);
 		}
 		return true;
 	}
-
 
 	public function restoreQuote()
 	{

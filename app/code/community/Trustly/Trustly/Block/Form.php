@@ -33,13 +33,9 @@ class Trustly_Trustly_Block_Form extends Mage_Payment_Block_Form
 	protected function _construct()
 	{
 		$locale = Mage::app()->getLocale();
-		$mark = Mage::getConfig()->getBlockClassName('core/template');
-		$mark = new $mark;
-		$mark->setTemplate('trustly/mark.phtml')
-			->setPaymentAcceptanceMarkHref('https://trustly.com/whatistrustly/');
 		$this->setTemplate('trustly/form.phtml')
-			->setMethodTitle('')
-			->setMethodLabelAfterHtml($mark->toHtml())
+			->setPaymentAcceptanceMarkHref('https://trustly.com/whatistrustly/')
+			->setMethodTitle(Mage::helper('trustly')->__('Trustly - Instant bank payment'))
 			;
 		return parent::_construct();
 	}
