@@ -1,0 +1,8 @@
+<fieldset class="form-list">
+	<?php $_code=$this->getMethodCode() ?>
+</fieldset>
+<div id="payment_form_<?php echo $_code ?>" style="display:none;">
+    <p class="trustly_title" style="padding-left: 20px; padding-top: 8px; ">
+        <?php echo $this->helper('trustly')->__('Trustly is a payment method that allows you to pay with your online bank account. All you need is your regular online bank credentials. It\'s fast, easy and secure!') ?>
+    </p>
+</div>
