@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,8 +16,8 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2014-06-17</date>
-    <time>13:22:04</time>
+    <date>2014-07-01</date>
+    <time>17:16:21</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
@@ -68,7 +68,7 @@
                         <file name="PaymentController.php" hash="dd2fa8f726bcb103379ba9e51944bf50"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="0b470ee4b4bafd345c0f92ca49efd713"/>
+                        <file name="config.xml" hash="f91527dd2707b2d4ddac8594a28375ff"/>
                         <file name="system.xml" hash="28993e0c9c79829b12cbcea209967be4"/>
                     </dir>
                     <dir name="lib">
@@ -100,7 +100,7 @@
                     <dir name="sql">
                         <dir name="trustly_setup">
                             <file name="install-2.0.4.php" hash="ca6855a238407e68356568c9c5a380ee"/>
-                            <file name="upgrade-1.0.4-2.0.0.php" hash="2badbe7703f9416f88f0a9cf458a8b5e"/>
+                            <file name="upgrade-1.0.5-2.0.0.php" hash="2badbe7703f9416f88f0a9cf458a8b5e"/>
                             <file name="upgrade-2.0.3-2.0.4.php" hash="1e826daddf5f2204e14142d6cac6d2a4"/>
                         </dir>
                     </dir>
