@@ -18,9 +18,9 @@ $connection->modifyColumn(
 
 $connection->addColumn(
 	$ordermappingstable,
-	'lock_timestamp', 
+	'lock_timestamp',
 	array(
-		'type'		=> Varien_Db_Ddl_Table::TYPE_TIMESTAMP, 
+		'type'		=> Varien_Db_Ddl_Table::TYPE_TIMESTAMP,
 		'nullable'	=> true,
 		'comment'	=> 'Lock timestamp'
 	)
@@ -28,9 +28,9 @@ $connection->addColumn(
 
 $connection->addColumn(
 	$ordermappingstable,
-	'lock_id', 
+	'lock_id',
 	array(
-		'type'		=> Varien_Db_Ddl_Table::TYPE_INTEGER, 
+		'type'		=> Varien_Db_Ddl_Table::TYPE_INTEGER,
 		'unsigned'	=> true,
 		'nullable'	=> true,
 		'comment'	=> 'Lock process id'

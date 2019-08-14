@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.7</version>
+    <version>2.0.8</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,8 +16,8 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2014-08-19</date>
-    <time>11:19:51</time>
+    <date>2014-12-01</date>
+    <time>11:19:54</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
@@ -59,16 +59,16 @@
                     </dir>
                     <dir name="Model">
                         <dir name="Mysql4">
-                            <file name="Ordermappings.php" hash="5372011caf25ca770d8c43922925c563"/>
+                            <file name="Ordermappings.php" hash="9a20e6607ef45773b1fd3beca10dc47c"/>
                         </dir>
-                        <file name="Ordermappings.php" hash="e1053123e3f2ba61b0d1a52b1fd2c831"/>
-                        <file name="Standard.php" hash="abee6ee1a3415bbccf38e3972bc91279"/>
+                        <file name="Ordermappings.php" hash="b2871d0594151a48e329bc950d09ab76"/>
+                        <file name="Standard.php" hash="50ff94700a51c7ad89be88f1b99bfc76"/>
                     </dir>
                     <dir name="controllers">
-                        <file name="PaymentController.php" hash="12ad7101ec3e5778660eee8df4ab8cc7"/>
+                        <file name="PaymentController.php" hash="a3dfc93ea5209f7fa8cb73876ae5b32d"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="478fb0941166e90bba3447d1f2419fd4"/>
+                        <file name="config.xml" hash="d4f5ca9a2f47ea0b58b77d653512ed0d"/>
                         <file name="system.xml" hash="d92061e410e4e923eb39fa59f2e00927"/>
                     </dir>
                     <dir name="lib">
@@ -78,30 +78,31 @@
                                     <file name="test.trustly.com.public.pem" hash="e61b3f9fc1e3893282fe2d575dc5571a"/>
                                     <file name="trustly.com.public.pem" hash="b2c821ad10c085a40b6c4e36ee6b8c9e"/>
                                 </dir>
-                                <file name="api.php" hash="5afb8836cf39828eaf685c6db6166b5c"/>
-                                <file name="ecommerce.php" hash="54e3b19bba389956afb71b5e31c6c1c8"/>
-                                <file name="signed.php" hash="47db2a74779ae5c554d4b7439d9751e3"/>
-                                <file name="unsigned.php" hash="5d667d0863cb5e84fe0365da95e7b6c4"/>
+                                <file name="api.php" hash="9a4f82b8d7cad47841f304307d2d5846"/>
+                                <file name="ecommerce.php" hash="c1a08d59a379ab34a40d707dbc59e51d"/>
+                                <file name="signed.php" hash="48b6a27776ab5c5e8bad8658d7c33769"/>
+                                <file name="unsigned.php" hash="c3a60853757caf73f5fda798be931e2c"/>
                             </dir>
                             <dir name="Data">
-                                <file name="data.php" hash="fce249eeec0ecaebc5052fb77b6631c5"/>
-                                <file name="jsonrpcnotificationrequest.php" hash="723ba8d9ec08bb8a988dcb1c3918776f"/>
-                                <file name="jsonrpcnotificationresponse.php" hash="d4c5d350380ff149e74e6855dc10123d"/>
-                                <file name="jsonrpcrequest.php" hash="a72ee040fac312a5ef124de4af7ccb8f"/>
-                                <file name="jsonrpcresponse.php" hash="617fef3a4e029d9320f7426502e6a5c8"/>
-                                <file name="request.php" hash="44822805f50a4520f53a4b1a2722295a"/>
-                                <file name="response.php" hash="39433a754c395a863aaa76f1bbba4527"/>
+                                <file name="data.php" hash="3219d091f894cffe9dce55c24c64af7f"/>
+                                <file name="jsonrpcnotificationrequest.php" hash="00a29b82d7fbbdbc823534cf7b024840"/>
+                                <file name="jsonrpcnotificationresponse.php" hash="9ffc52a8a52b03a7f737144d7c651946"/>
+                                <file name="jsonrpcrequest.php" hash="ad057f824143361c629575e355a168ff"/>
+                                <file name="jsonrpcresponse.php" hash="45c31a0a6642b42d1f4b3f3887a39203"/>
+                                <file name="jsonrpcsignedresponse.php" hash="0fdcb9de9f5c6d2600c64852c4eaad79"/>
+                                <file name="request.php" hash="34a0927f88912ed9fdee247a28e74c57"/>
+                                <file name="response.php" hash="879837bdd13dfd75d812f170ea4918e7"/>
                             </dir>
-                            <file name="exceptions.php" hash="e583e378d6f3f6e4fe2eadcf9b3f6ee4"/>
+                            <file name="exceptions.php" hash="76824da93a3bb855a248ec3f27f84fe8"/>
                         </dir>
                         <file name="LICENCE" hash="8713032dd477873c84ed4ff4b7da5f70"/>
-                        <file name="Trustly.php" hash="e7115c7872a87c2191b4f90b0dc0e97a"/>
+                        <file name="Trustly.php" hash="c2d7e9268b03e89699ad17047dd78bc3"/>
                     </dir>
                     <dir name="sql">
                         <dir name="trustly_setup">
-                            <file name="install-2.0.4.php" hash="ca6855a238407e68356568c9c5a380ee"/>
-                            <file name="upgrade-1.0.5-2.0.0.php" hash="2badbe7703f9416f88f0a9cf458a8b5e"/>
-                            <file name="upgrade-2.0.3-2.0.4.php" hash="1e826daddf5f2204e14142d6cac6d2a4"/>
+                            <file name="install-2.0.4.php" hash="8adab66e05093992264374b613c8f796"/>
+                            <file name="upgrade-1.0.5-2.0.0.php" hash="305e6535758a1da91b107a4a6b5b33d5"/>
+                            <file name="upgrade-2.0.3-2.0.4.php" hash="cb345308065dbac8985db01ebc61f628"/>
                         </dir>
                     </dir>
                 </dir>
@@ -113,16 +114,6 @@
             </dir>
         </target>
         <target name="mageskin">
-            <dir name="frontend">
-                <dir name="base">
-                    <dir name="default">
-                        <dir name="images">
-                            <file name="trustly-big.png" hash="ace4a2fcd8306b7e5835076340c7877b"/>
-                            <file name="trustly-small.png" hash="f99283dadd49b60e6a68962eda43f83f"/>
-                        </dir>
-                    </dir>
-                </dir>
-            </dir>
         </target>
         <target name="magedesign">
             <dir name="frontend">
@@ -134,8 +125,8 @@
                         <dir name="template">
                             <dir name="trustly">
                                 <file name="form.phtml" hash="f37a2b86d35eea0a8cd6ec176d466424"/>
-                                <file name="iframe.phtml" hash="be80b2c6cf1d74f134624444447a7e8d"/>
-                                <file name="mark.phtml" hash="76011840449ff5067311d2f2987bdd7d"/>
+                                <file name="iframe.phtml" hash="eb8fe39d00643f27c392845f5b535a44"/>
+                                <file name="mark.phtml" hash="247201e74fde66ffdca19045a28ff667"/>
                             </dir>
                         </dir>
                     </dir>

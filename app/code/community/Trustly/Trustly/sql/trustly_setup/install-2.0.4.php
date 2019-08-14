@@ -14,8 +14,8 @@ if(!$installer->getConnection()->isTableExists($installer->getTable('trustly/ord
 					$installer->getTable('trustly/ordermappings'),
 					array('trustly_order_id'),
 					Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX
-				), 
-				array('trustly_order_id'), 
+				),
+				array('trustly_order_id'),
 				array('type' => Varien_Db_Adapter_Interface::INDEX_TYPE_INDEX)
 			);
 	$installer->getConnection()->createTable($table);

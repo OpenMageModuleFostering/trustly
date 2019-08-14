@@ -58,6 +58,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 		$session->setTrustlyQuoteId($session->getQuoteId());
 
 		$session->unsUrlTrustly();
+		/* Clear all the error messages before we checkout, or previous errors might linger on */
+		$session->getMessages(true);
 
 		$standard = Mage::getModel('trustly/standard');
 		$redirectError = NULL;
@@ -156,9 +158,9 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			if($orderMapping) {
 				$incrementId = $orderMapping->getMagentoIncrementId();
 			}else {
-					# If we cannot find the mapping here, check to see if the 
-					# enduserid seems to be a valid incrment id, in old code this 
-					# used to be the case. So to handle the transition between the 
+					# If we cannot find the mapping here, check to see if the
+					# enduserid seems to be a valid incrment id, in old code this
+					# used to be the case. So to handle the transition between the
 					# old module and this one, allow for this.
 					# We always use email for enduserid, so we will not match something by accident.
 				$enduserid = $notification->getData('enduserid');
@@ -180,13 +182,13 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				return;
 			}
 
-			/* Due to race conditions we need to handle the processing 
-			 * for this order one at a time only. Otherwise we might 
-			 * end up processing the credit and pending 
+			/* Due to race conditions we need to handle the processing
+			 * for this order one at a time only. Otherwise we might
+			 * end up processing the credit and pending
 			 * notifications at the same time. */
 			$increment_lockid = $orderMapping->lockIncrementForProcessing($incrementId);
 			if($increment_lockid === false) {
-				/* If we cannot lock this increment abort now, respond 
+				/* If we cannot lock this increment abort now, respond
 				 * nothing we will get a new attempt later */
 				Mage::log("Attempt to process already locked magento increment $incrementId", Zend_Log::DEBUG, self::LOG_FILE);
 				session_write_close();
@@ -250,7 +252,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				}
 			}
 
-				/* Check if we have processed this transaction before, if so 
+				/* Check if we have processed this transaction before, if so
 					* say we did fine, we obviously managed to save it...  */
 			if(isset($notification_transaction)) {
 				Mage::helper('trustly')->sendResponseNotification($notification, true);
@@ -269,11 +271,11 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 			$transactionSave = Mage::getModel('core/resource_transaction');
 
-				/* We should always have a payment with the trustly method, if 
+				/* We should always have a payment with the trustly method, if
 					* we do not have one, create it we will need this regardless of the method for the notification */
 			if(is_null($trustly_payment) || is_null($trustly_payment->getTxnType())) {
-					/* Create a payment with our TrustlyOrderId as the 
-						* TransactionId, we will later add the current 
+					/* Create a payment with our TrustlyOrderId as the
+						* TransactionId, we will later add the current
 						* notification as a child payment for this payment */
 				$trustly_payment->resetTransactionAdditionalInfo();
 				$trustly_payment->setTransactionId($trustlyOrderId);
@@ -285,8 +287,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					->addObject($trustly_payment);
 			}
 
-				# Check to see if we have invoiced this order already, if 
-				# so do not do it again. We might be getting the same 
+				# Check to see if we have invoiced this order already, if
+				# so do not do it again. We might be getting the same
 				# notification over again.
 			if(($_method == 'pending' || $_method == 'credit') && isset($order_invoice)) {
 				Mage::log(sprintf("Recieved $_method notification for order with increment %s for orderid %s, but order already had an invoice, nothing done", $incrementId, $trustlyOrderId), Zend_Log::DEBUG, self::LOG_FILE);
@@ -296,16 +298,16 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					Mage::log(sprintf("Recieved a %s notification, no previous invoice could be found for Trustly orderid %s, magento order %s. No pending notification send before?! Creating one now", $_method, $trustlyOrderId, $incrementId), Zend_Log::WARN, self::LOG_FILE);
 				}
 
-					/* A credit notification without an invoice can mean one of two 
-					 * things, either the invoice has been removed or we did not 
-					 * receive the pending notification for this order. At this 
-					 * point we cannot really reject the money, a payment has been 
+					/* A credit notification without an invoice can mean one of two
+					 * things, either the invoice has been removed or we did not
+					 * receive the pending notification for this order. At this
+					 * point we cannot really reject the money, a payment has been
 					 * done, so create a new invoice and attach this payment to that invoice. */
 
-					/* When we get the pending notification the user has 
-					 * completed his end of the payment. The payment can 
-					 * still fail and we are yet to be credited any funds. 
-					 * Create an invoice, but do not set it as paid just 
+					/* When we get the pending notification the user has
+					 * completed his end of the payment. The payment can
+					 * still fail and we are yet to be credited any funds.
+					 * Create an invoice, but do not set it as paid just
 					 *  yet. */
 
 				$order_invoice = $order->prepareInvoice()
@@ -339,10 +341,10 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 
 			if($_method == 'pending') {
-					/* We have no authorize for the payment (As we would simply 
-						* abort if we have gotten the pending before) so create 
+					/* We have no authorize for the payment (As we would simply
+						* abort if we have gotten the pending before) so create
 						* an authorization for the payment here and append */
-				$notification_transaction = $this->addChildTransaction($trustly_payment, 
+				$notification_transaction = $this->addChildTransaction($trustly_payment,
 					$trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH, true);
 
@@ -443,7 +445,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$comment .= "<br />" . Mage::helper('trustly')->__('Notification id: %s', $notification->getData('notificationid'));
 				$comment .= "<br />" . Mage::helper('trustly')->__('Debit amount: %s %s', $_amount, $_currency);
 
-					/* Normally the only debit amount that should be received is 
+					/* Normally the only debit amount that should be received is
 					 * the full amount, but you never know.... */
 				if ($order->getGrandTotal() == $_amount) {
 					$creditmemo = Mage::getModel('sales/service_order', $order)
@@ -457,7 +459,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				}
 
 				/* Add a child transaction to the original payment issuing a refund for the order.  */
-				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId, 
+				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND, true);
 
 				$order->setState($order->getStatus(), true, $comment);
@@ -468,12 +470,12 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				Mage::log("Recieved debit for order with increment $incrementId of $_amount $_currency", Zend_Log::INFO, self::LOG_FILE);
 			}elseif($_method == 'cancel') {
 
-				/* Cancel will be sent when the payment will not be completed. 
-				 * The cancel method will always be sent in conjunction with a 
-				 * debit notification, in the debit notification we handle the 
+				/* Cancel will be sent when the payment will not be completed.
+				 * The cancel method will always be sent in conjunction with a
+				 * debit notification, in the debit notification we handle the
 				 * montary changeback and cancel of the invoices */
 
-				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId, 
+				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_VOID, true);
 
 				$orderStatus = Mage_Sales_Model_Order::STATE_CANCELED;

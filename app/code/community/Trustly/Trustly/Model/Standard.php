@@ -144,8 +144,8 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 		$orderlines = array();
 		foreach ($order->getAllItems() as $item) {
 			if (!$item->getParentItem()) {
-				/* The EAN code here is really not standard and there is no 
-				 * standard field. But if present (with the guessed name) we will 
+				/* The EAN code here is really not standard and there is no
+				 * standard field. But if present (with the guessed name) we will
 				 * get it and fetching a non-existant one will not blow up, simply return null.  */
 				$orderline = $api->createOrderline(
 					$item->getName(),
@@ -182,7 +182,7 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 
 		$endUserId = strtolower($order->getCustomerEmail());
 
-		$messageId = $order->getRealOrderId();
+		$messageId = uniqid($order->getRealOrderId().'-', true);
 
 		$billingAddress = $order->getBillingAddress();
 		$shippingAddress = $order->getShippingAddress();
@@ -243,7 +243,7 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 			$incrementId = $order->getIncrementId();
 			$orderMapping = Mage::getModel('trustly/ordermappings');
 			$omData = array(
-				'trustly_order_id' => $trustlyOrderId, 
+				'trustly_order_id' => $trustlyOrderId,
 				'magento_increment_id' => $incrementId,
 				'datestamp' => Varien_Date::now(),
 			);

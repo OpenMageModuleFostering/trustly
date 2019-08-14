@@ -1,19 +1,19 @@
 <?php
-/*
+/**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014 Trustly Group AB
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -50,8 +50,8 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 		$signature = $response->getSignature();
 		$data = $response->getResult();
 
-		/* As the data in the ecommerce responses are flat, all the uuid, 
-		 * signatures, method information is on the same level as the data 
+		/* As the data in the ecommerce responses are flat, all the uuid,
+		 * signatures, method information is on the same level as the data
 		 * response. Remove theese from the data before checking the signature. */
 		unset($data['uuid']);
 		unset($data['signature']);
@@ -75,8 +75,8 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 		return TRUE;
 	}
 
-	/* Build an orderline suitable for the payment call using the supplied 
-	 * information. Call once for each line of the order and stuff into an 
+	/* Build an orderline suitable for the payment call using the supplied
+	 * information. Call once for each line of the order and stuff into an
 	 * array that is later supplied to the pay() call.
 	 *
 	 * Typically:
@@ -86,7 +86,7 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 	 * ...
 	 * $result = $api->pay(..., $orderlines);
 	 * */
-	public function createOrderline($description=NULL, $amount=NULL, 
+	public function createOrderline($description=NULL, $amount=NULL,
 		$currency=NULL, $vat=NULL, $quantity=1, $eancode=NULL) {
 
 		$orderline = array();
@@ -118,11 +118,11 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 		return $orderline;
 	}
 
-	public function pay($notificationurl, $enduserid, $messageid, 
-            $locale=NULL, $amount=NULL, $currency=NULL, $country=NULL, $host=NULL,
-            $returnurl=NULL, $templateurl=NULL, $urltarget=NULL,
-			$email=NULL, $firstname=NULL, $lastname=NULL, $integrationmodule=NULL,
-			$orderlines=NULL) {
+	public function pay($notificationurl, $enduserid, $messageid,
+		$locale=NULL, $amount=NULL, $currency=NULL, $country=NULL, $host=NULL,
+		$returnurl=NULL, $templateurl=NULL, $urltarget=NULL,
+		$email=NULL, $firstname=NULL, $lastname=NULL, $integrationmodule=NULL,
+		$orderlines=NULL) {
 
 		$request = new Trustly_Data_Request('Pay',
 			array(
@@ -147,7 +147,7 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 		return $this->call($request);
 	}
 
-    public function repay($orderid, $amount, $currency) {
+	public function repay($orderid, $amount, $currency) {
 
 		$request = new Trustly_Data_Request('Repay',
 			array(
@@ -165,5 +165,4 @@ class Trustly_Api_ECommerce extends Trustly_Api {
 		return $this->call($request);
 	}
 }
-
-?>
+/* vim: set noet cindent ts=4 ts=4 sw=4: */

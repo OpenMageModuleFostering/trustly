@@ -1,19 +1,19 @@
 <?php
-/*
+/**
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2014 Trustly Group AB
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,7 +26,7 @@
 class Trustly_Api_Signed extends Trustly_Api {
 	var $merchant_privatekey = NULL;
 
-	function __construct($merchant_privatekeyfile, $username, $password, $host='trustly.com', $port=443, $is_https=TRUE) {
+	public function __construct($merchant_privatekeyfile, $username, $password, $host='trustly.com', $port=443, $is_https=TRUE) {
 
 		parent::__construct($host, $port, $is_https);
 
@@ -40,7 +40,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 		}
 	}
 
-	/* Load up the merchants key for signing data from the supplied filename. 
+	/* Load up the merchants key for signing data from the supplied filename.
 	 * Inializes the internal openssl certificate needed for the signing */
 	public function loadMerchantPrivateKey($filename) {
 		$cert = @file_get_contents($filename);
@@ -55,7 +55,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 		return FALSE;
 	}
 
-	/* Create a signature string suitable for including as the signature in an 
+	/* Create a signature string suitable for including as the signature in an
 	 * outgoing request */
 	public function signMerchantRequest($request) {
 		if(!isset($this->merchant_privatekey)) {
@@ -82,8 +82,6 @@ class Trustly_Api_Signed extends Trustly_Api {
 		}
 
 		throw new Trustly_SignatureException('Failed to sign the outgoing merchant request. '. openssl_error_string());
-
-		return FALSE;
 	}
 
 	public function insertCredentials($request) {
@@ -100,14 +98,14 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	public function handleResponse($request, $body, $curl) {
-		$response = new Trustly_Data_JSONRPCResponse($body, $curl);
+		$response = new Trustly_Data_JSONRPCSignedResponse($body, $curl);
 
 		if($this->verifyTrustlySignedResponse($response) !== TRUE) {
 			throw new Trustly_SignatureException('Incomming message signature is not valid', $response);
 		}
 
 		if($response->getUUID() !== $request->getUUID()) {
-			throw new Trustly_DataError('Incoming message is not related to request. UUID mismatch');
+			throw new Trustly_DataException('Incoming message is not related to request. UUID mismatch');
 		}
 
 		return $response;
@@ -131,24 +129,24 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	private function clearOpenSSLError() {
-		/* Not really my favourite part of this library implementation. As 
-		 * openssl queues error messages a single call to openssl_error_string 
-		 * after a fail might get another "queued" message from before. And as 
-		 * there is no way to clear the buffer... we will iterate until we will 
+		/* Not really my favourite part of this library implementation. As
+		 * openssl queues error messages a single call to openssl_error_string
+		 * after a fail might get another "queued" message from before. And as
+		 * there is no way to clear the buffer... we will iterate until we will
 		 * get no more errors. Brilliant. */
 		while ($err = openssl_error_string());
 	}
 
 	protected function generateUUID() {
-		/* Not the classiest implementation, but to reduce the dependency of 
-		 * non standard libraries we build it this way.  The risk of 
+		/* Not the classiest implementation, but to reduce the dependency of
+		 * non standard libraries we build it this way.  The risk of
 		 * collisions is low enough with a MD5 */
 		$md5 = md5(uniqid('', true));
 		return substr($md5, 0, 8).'-'.substr($md5, 8, 4).'-'.substr($md5, 12, 4).'-'.substr($md5, 16, 4).'-'.substr($md5, 20, 12);
 	}
 
 	public function call($request) {
-		$uuid = $request->getUUID(); 
+		$uuid = $request->getUUID();
 		if($uuid === NULL) {
 			$request->setUUID($this->generateUUID());
 		}
@@ -156,9 +154,9 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	/* Make a deposit call */
-	public function deposit($notificationurl, $enduserid, $messageid, 
-		$locale=NULL, $amount=NULL, $currency=NULL, $country=NULL, 
-		$mobilephone=NULL, $firstname=NULL, $lastname=NULL, 
+	public function deposit($notificationurl, $enduserid, $messageid,
+		$locale=NULL, $amount=NULL, $currency=NULL, $country=NULL,
+		$mobilephone=NULL, $firstname=NULL, $lastname=NULL,
 		$nationalidentificationnumber=NULL, $shopperstatement=NULL,
 		$ip=NULL, $successurl=NULL, $failurl=NULL, $templateurl=NULL,
 		$urltarget=NULL, $suggestedminamount=NULL, $suggestedmaxamount=NULL,
@@ -171,17 +169,17 @@ class Trustly_Api_Signed extends Trustly_Api {
 			);
 
 			$attributes = array(
-				'Locale' => $locale, 
+				'Locale' => $locale,
 				'Amount' => $amount,
 				'Currency' => $currency,
-				'Country' => $country, 
+				'Country' => $country,
 				'MobilePhone' => $mobilephone,
-				'Firstname' => $firstname, 
-				'Lastname' => $lastname, 
-				'NationalIdentificationNumber' => $nationalidentificationnumber, 
+				'Firstname' => $firstname,
+				'Lastname' => $lastname,
+				'NationalIdentificationNumber' => $nationalidentificationnumber,
 				'ShopperStatement' => $shopperstatement,
 				'IP' => $ip,
-				'SuccessURL' => $successurl, 
+				'SuccessURL' => $successurl,
 				'FailURL' => $failurl,
 				'TemplateURL' => $templateurl,
 				'URLTarget' => $urltarget,
@@ -192,7 +190,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 
 			$request = new Trustly_Data_JSONRPCRequest('Deposit', $data, $attributes);
 			return $this->call($request);
-		}
+	}
 
 	/* Make a refund call */
 	public function refund($orderid, $amount, $currency) {
@@ -208,9 +206,9 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	/* Make a withdraw call */
-	public function withdraw($notificationurl, $enduserid, $messageid, 
-		$locale=NULL, $currency=NULL, $country=NULL, 
-		$mobilephone=NULL, $firstname=NULL, $lastname=NULL, 
+	public function withdraw($notificationurl, $enduserid, $messageid,
+		$locale=NULL, $currency=NULL, $country=NULL,
+		$mobilephone=NULL, $firstname=NULL, $lastname=NULL,
 		$nationalidentificationnumber=NULL, $clearinghouse=NULL,
 		$banknumber=NULL, $accountnumber=NULL) {
 
@@ -223,12 +221,12 @@ class Trustly_Api_Signed extends Trustly_Api {
 			);
 
 			$attributes = array(
-				'Locale' => $locale, 
-				'Country' => $country, 
+				'Locale' => $locale,
+				'Country' => $country,
 				'MobilePhone' => $mobilephone,
-				'Firstname' => $firstname, 
-				'Lastname' => $lastname, 
-				'NationalIdentificationNumber' => $nationalidentificationnumber, 
+				'Firstname' => $firstname,
+				'Lastname' => $lastname,
+				'NationalIdentificationNumber' => $nationalidentificationnumber,
 				'ClearingHouse' => $clearinghouse,
 				'BankNumber' => $banknumber,
 				'AccountNumber' => $accountnumber,
@@ -236,7 +234,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 
 			$request = new Trustly_Data_JSONRPCRequest('Withdraw', $data, $attributes);
 			return $this->call($request);
-		}
+	}
 
 	/* Make an approvewithdrawal call */
 	public function approveWithdrawal($orderid) {
@@ -261,8 +259,9 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	/* Make a select account call */
-	public function selectAccount($notificationurl, $enduserid, $messageid, 
-		$locale=NULL, $country=NULL, $firstname=NULL, $lastname=NULL) {
+	public function selectAccount($notificationurl, $enduserid, $messageid,
+		$locale=NULL, $country=NULL, $ip=NULL, $successurl=NULL, $urltarget=NULL,
+		$mobilephone=NULL, $firstname=NULL, $lastname=NULL) {
 
 			$data = array(
 				'NotificationURL' => $notificationurl,
@@ -271,18 +270,22 @@ class Trustly_Api_Signed extends Trustly_Api {
 			);
 
 			$attributes = array(
-				'Locale' => $locale, 
-				'Country' => $country, 
-				'Firstname' => $firstname, 
-				'Lastname' => $lastname, 
+				'Locale' => $locale,
+				'Country' => $country,
+				'IP' => $ip,
+				'SuccessURL' => $successurl,
+				'URLTarget' => $urltarget,
+				'MobilePhone' => $mobilephone,
+				'Firstname' => $firstname,
+				'Lastname' => $lastname,
 			);
 
 			$request = new Trustly_Data_JSONRPCRequest('SelectAccount', $data, $attributes);
 			return $this->call($request);
 	}
 
-	public function registerAccount($enduserid, $clearinghouse, $banknumber, 
-		$accountnumber, $firstname, $lastname, $mobilephone=NULL, 
+	public function registerAccount($enduserid, $clearinghouse, $banknumber,
+		$accountnumber, $firstname, $lastname, $mobilephone=NULL,
 		$nationalidentificationnumber=NULL, $address=NULL) {
 
 			$data = array(
@@ -290,13 +293,13 @@ class Trustly_Api_Signed extends Trustly_Api {
 				'ClearingHouse' => $clearinghouse,
 				'BankNumber' => $banknumber,
 				'AccountNumber' => $accountnumber,
-				'Firstname' => $firstname, 
-				'Lastname' => $lastname, 
+				'Firstname' => $firstname,
+				'Lastname' => $lastname,
 			);
 
 			$attributes = array(
-				'MobilePhone' => $mobilephone, 
-				'NationalIdentificationNumber' => $nationalidentificationnumber, 
+				'MobilePhone' => $mobilephone,
+				'NationalIdentificationNumber' => $nationalidentificationnumber,
 				'Address' => $address
 			);
 
@@ -304,7 +307,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 			return $this->call($request);
 	}
 
-	public function accountPayout($notificationurl, $accountid, $enduserid, 
+	public function accountPayout($notificationurl, $accountid, $enduserid,
 		$messageid, $amount, $currency) {
 
 			$data = array(
@@ -312,8 +315,8 @@ class Trustly_Api_Signed extends Trustly_Api {
 				'EndUserID' => $enduserid,
 				'MessageID' => $messageid,
 				'AccountID' => $accountid,
-				'Amount' => $amount, 
-				'Currency' => $currency, 
+				'Amount' => $amount,
+				'Currency' => $currency,
 			);
 
 			$attributes = array(
@@ -324,7 +327,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 	}
 
 	public function p2p($notificationurl, $enduserid, $messageid, $ip,
-            $authorizeonly=NULL, $templatedata=NULL, $successurl=NULL,
+			$authorizeonly=NULL, $templatedata=NULL, $successurl=NULL,
 			$method=NULL, $lastname=NULL, $firstname=NULL, $urltarget=NULL,
 			$locale=NULL, $amount=NULL, $currency=NULL, $templateurl=NULL,
 			$displaycurrency=NULL) {
@@ -355,7 +358,7 @@ class Trustly_Api_Signed extends Trustly_Api {
 
 			$request = new Trustly_Data_JSONRPCRequest('P2P', $data, $attributes);
 			return $this->call($request);
-			}
+	}
 
 	public function capture($orderid, $amount, $currency) {
 
@@ -391,5 +394,4 @@ class Trustly_Api_Signed extends Trustly_Api {
 		return $api->hello();
 	}
 }
-
-?>
+/* vim: set noet cindent ts=4 ts=4 sw=4: */
