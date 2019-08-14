@@ -1,4 +1,28 @@
 <?php
+/*
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Trustly Group AB
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ */
 
 class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Action
 {
@@ -112,7 +136,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 		try {
 			$notification = $api->handleNotification($httpBody);
 		} catch(Trustly_JSONRPCVersionException $e) {
-			Mage::log("Got incoming notification with invalid json rpc version (".$e."), message was ".$e->getBadData(), Zend_Log::WARN, self::LOG_FILE);
+			Mage::log("Got incoming notification with invalid json rpc version (".$e.")", Zend_Log::WARN, self::LOG_FILE);
 			return ;
 		} catch(Trustly_SignatureException $e) {
 			Mage::log("Got incoming notification with invalid signature (".$e."), message was ".$e->getBadData(), Zend_Log::WARN, self::LOG_FILE);
@@ -151,10 +175,22 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				Mage::getSingleton('checkout/session')->addError(Mage::helper('trustly')->__("Cannot find the relation of Trustly orderid %s for user %s.", $trustlyOrderId, $notification->getData('enduserid')));
 				session_write_close();
 
-				Mage::log("Could not find the mapping of Trustly orderid $trustlyOrderId in the incoming notification. incrmentid $incrementId Enduser is ".$notification->getData('enduserid'), Zend_Log::WARN, self::LOG_FILE);
-				$this->_redirect('checkout/cart', array('_secure'=>Mage::app()->getStore()->isCurrentlySecure()));
+				Mage::log("Could not find the mapping of Trustly orderid $trustlyOrderId in the incoming notification. incrementid $incrementId Enduser is ".$notification->getData('enduserid'), Zend_Log::WARN, self::LOG_FILE);
 
 				return;
+			}
+
+			/* Due to race conditions we need to handle the processing 
+			 * for this order one at a time only. Otherwise we might 
+			 * end up processing the credit and pending 
+			 * notifications at the same time. */
+			$increment_lockid = $orderMapping->lockIncrementForProcessing($incrementId);
+			if($increment_lockid === false) {
+				/* If we cannot lock this increment abort now, respond 
+				 * nothing we will get a new attempt later */
+				Mage::log("Attempt to process already locked magento increment $incrementId", Zend_Log::DEBUG, self::LOG_FILE);
+				session_write_close();
+				return ;
 			}
 
 			$order->loadByIncrementId($incrementId);
@@ -167,7 +203,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				session_write_close();
 
 				Mage::log("Could not find the order with increment $incrementId (Trustly orderid $trustlyOrderId) in the incoming notification", Zend_Log::WARN, self::LOG_FILE);
-				$this->_redirect('checkout/cart', array('_secure'=>Mage::app()->getStore()->isCurrentlySecure()));
+
+				$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 
 				return;
 			}
@@ -196,6 +233,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			if (is_null($trustly_payment)) {
 				Mage::helper('trustly')->sendResponseNotification($notification, true);
 				Mage::log(sprintf("Recieved payment notification for order %s, but payment method is %s, not Trustly", $incrementId, $trustly_payment->getMethod()), Zend_Log::WARN, self::LOG_FILE);
+				$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 				return ;
 			}
 
@@ -218,6 +256,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			if(isset($notification_transaction)) {
 				Mage::helper('trustly')->sendResponseNotification($notification, true);
 				Mage::log(sprintf("Received notification %s already processed", $trustlyNotificationId), Zend_Log::DEBUG, self::LOG_FILE);
+				$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 				return ;
 			}
 
@@ -338,6 +377,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					 * contents of it */
 					Mage::helper('trustly')->sendResponseNotification($notification, true);
 
+					$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 					return;
 				}
 
@@ -457,6 +497,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 			$transactionSave->save();
 			Mage::helper('trustly')->sendResponseNotification($notification, true);
+
+			$orderMapping->unlockIncrementAfterProcessing($incrementId, $increment_lockid);
 		}
 	}
 
