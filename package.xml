@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.10</version>
+    <version>2.0.11</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,8 +16,8 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2015-02-05</date>
-    <time>11:26:30</time>
+    <date>2015-02-16</date>
+    <time>13:49:18</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
@@ -65,10 +65,10 @@
                         <file name="Standard.php" hash="7fc3027a735a544f1bcd0cd65a745d88"/>
                     </dir>
                     <dir name="controllers">
-                        <file name="PaymentController.php" hash="89eca8a5d026166d9faa56f48a5772a1"/>
+                        <file name="PaymentController.php" hash="2a4038d664f17eac7dc98e7b60ba9fe8"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="b5102728ff4264db2e24f975bfe840aa"/>
+                        <file name="config.xml" hash="2a6d8d9b1ffd7c6ab07618e0ede2426a"/>
                         <file name="system.xml" hash="d92061e410e4e923eb39fa59f2e00927"/>
                     </dir>
                     <dir name="lib">

@@ -121,8 +121,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 			if($redirectError) {
 				$session->addError($redirectError);
-				$this->unmapQuote();
-				$this->restoreQuote();
+				$this->cancelCheckoutOrder();
 			} else {
 				# We use this to keep track of the current quote we have
 				# transformed into an order, use it when cancelling (to restore
@@ -579,8 +578,14 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 	public function  failAction()
 	{
-		Mage::log("failAction() -> cancelAction", Zend_Log::DEBUG, self::LOG_FILE);
-		$this->cancelAction();
+		Mage::log("failAction()", Zend_Log::DEBUG, self::LOG_FILE);
+
+		if($this->cancelCheckoutOrder()) {
+			$session = Mage::getSingleton('checkout/session');
+			$session->addSuccess(Mage::helper('trustly')->__('Trustly order has been canceled.'));
+		}
+
+		$this->_redirect('checkout/cart', array('_secure'=>Mage::app()->getStore()->isCurrentlySecure()));
 	}
 
 
@@ -588,7 +593,19 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 	{
 		Mage::log("cancelAction()", Zend_Log::DEBUG, self::LOG_FILE);
 
+		if($this->cancelCheckoutOrder()) {
+			$session = Mage::getSingleton('checkout/session');
+			$session->addSuccess(Mage::helper('trustly')->__('Trustly order has been canceled.'));
+		}
+
+		$this->_redirect('checkout/cart', array('_secure'=>Mage::app()->getStore()->isCurrentlySecure()));
+	}
+
+
+	public function cancelCheckoutOrder()
+	{
 		$session = Mage::getSingleton('checkout/session');
+
 		try {
 			$orderId = $session->getLastOrderId();
 			Mage::log("Attempting to cancel order $orderId", Zend_Log::DEBUG, self::LOG_FILE);
@@ -609,7 +626,6 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$session->unsTrustlyIframeUrl();
 				Mage::getModel('trustly/ordermappings')->unmapOrderIncrement($order->getIncrementId());
 				$this->restoreQuote();
-				$session->addSuccess(Mage::helper('trustly')->__('Trustly order has been canceled.'));
 			} else {
 				Mage::log(sprintf("No order found to cancel (order=%s, orderid=%s, orderquoteid=%s, sessionquoteid=%s)",
 					($order?'YES':'NO'),
@@ -617,18 +633,18 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 					($order->getQuoteId()?$order->getQuoteId():''),
 					($sess_quoteid?$sess_quoteid:'')),
 				Zend_Log::WARN, self::LOG_FILE);
-				$session->addSuccess(Mage::helper('trustly')->__('Trustly order has been canceled.'));
 			}
 		} catch (Mage_Core_Exception $e) {
 			Mage::log("Got Mage_Core_Exception when cancelling order: " . $e->getMessage(), Zend_Log::WARN, self::LOG_FILE);
 			$session->addError($e->getMessage());
+			return false;
 		} catch (Exception $e) {
 			$session->addError(Mage::helper('trustly')->__('Unable to cancel Trustly order.'));
 			Mage::log("Got Exception when cancelling order: " . $e->getMessage(), Zend_Log::WARN, self::LOG_FILE);
 			Mage::logException($e);
+			return false;
 		}
-
-		$this->_redirect('checkout/cart', array('_secure'=>Mage::app()->getStore()->isCurrentlySecure()));
+		return true;
 	}
 
 
