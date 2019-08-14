@@ -150,8 +150,8 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 				$orderline = $api->createOrderline(
 					$item->getName(),
 					$item->getPrice(),
-					$order->getBaseCurrencyCode(),
-					$item->getBaseTaxAmount(),
+					Mage::helper('trustly')->getOrderCurrencyCode($order),
+					$item->getTaxAmount(),
 					$item->getQtyOrdered(),
 					$item->getEan());
 				$orderlines[] = $orderline;
@@ -198,7 +198,7 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 			$countryId = $shippingAddress->getCountryId();
 		}
 
-		$versionString = sprintf("Magento %s/%s %s", 
+		$versionString = sprintf("Magento %s/%s %s",
 			Mage::getVersion(), Mage::app()->getFrontController()->getRequest()->getModuleName(),
 			Mage::helper('trustly')->getExtensionVersion());
 
@@ -210,8 +210,8 @@ class Trustly_Trustly_Model_Standard extends Mage_Payment_Model_Method_Abstract
 			$endUserId,
 			$messageId,
 			Mage::app()->getLocale()->getLocaleCode(),
-			number_format($order->getBaseGrandTotal() ,2 ,"." ,""),
-			$order->getBaseCurrencyCode(),
+			Mage::helper('trustly')->getOrderAmount($order),
+			Mage::helper('trustly')->getOrderCurrencyCode($order),
 			$countryId,
 			$billingAddress->getTelephone(),
 			$order->getCustomerFirstname(),

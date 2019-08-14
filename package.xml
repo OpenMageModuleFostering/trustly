@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.6</version>
+    <version>2.0.7</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,15 +16,15 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2014-08-12</date>
-    <time>10:46:54</time>
+    <date>2014-08-19</date>
+    <time>11:19:51</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
                 <file name="Trustly_Trustly.csv" hash="bdd0d2cbbffee4ab2f268e90de6178a4"/>
             </dir>
             <dir name="en_US">
-                <file name="Trustly_Trustly.csv" hash="bb2c3acdfadaa8bab74f6b934501c70e"/>
+                <file name="Trustly_Trustly.csv" hash="a6b8b1dae6a076e12068dceeff6d2d6a"/>
             </dir>
             <dir name="es_ES">
                 <file name="Trustly_Trustly.csv" hash="37f85a0f00431a0d4095b8e29faaf7fb"/>
@@ -39,10 +39,10 @@
                 <file name="Trustly_Trustly.csv" hash="4f05bfa243336c0622bb76f8d3e190e9"/>
             </dir>
             <dir name="sv_SE">
-                <file name="Trustly_Trustly.csv" hash="ad3a76426cbb097590ed90b53052391d"/>
+                <file name="Trustly_Trustly.csv" hash="6f3eb2cddbb6d34a4ef0372cbc7d664b"/>
             </dir>
         </target>
-        <target name="magelocal">
+        <target name="magecommunity">
             <dir name="Trustly">
                 <dir name="Trustly">
                     <dir name="Block">
@@ -55,21 +55,21 @@
                         <file name="Redirect.php" hash="33bf3038c097080b4a723babd09a743f"/>
                     </dir>
                     <dir name="Helper">
-                        <file name="Data.php" hash="5d345dbe353c2d6c236e7daa7dbe3b6a"/>
+                        <file name="Data.php" hash="73dfcf422720db976dc260e009cf3b80"/>
                     </dir>
                     <dir name="Model">
                         <dir name="Mysql4">
                             <file name="Ordermappings.php" hash="5372011caf25ca770d8c43922925c563"/>
                         </dir>
                         <file name="Ordermappings.php" hash="e1053123e3f2ba61b0d1a52b1fd2c831"/>
-                        <file name="Standard.php" hash="1aa2b74d08bbb35fb020ba28f4e0b1c1"/>
+                        <file name="Standard.php" hash="abee6ee1a3415bbccf38e3972bc91279"/>
                     </dir>
                     <dir name="controllers">
-                        <file name="PaymentController.php" hash="dd2fa8f726bcb103379ba9e51944bf50"/>
+                        <file name="PaymentController.php" hash="12ad7101ec3e5778660eee8df4ab8cc7"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="f4c625253bad0f96a18d9c0950b57b29"/>
-                        <file name="system.xml" hash="06764bda19eb06ade6dac239abc55aca"/>
+                        <file name="config.xml" hash="478fb0941166e90bba3447d1f2419fd4"/>
+                        <file name="system.xml" hash="d92061e410e4e923eb39fa59f2e00927"/>
                     </dir>
                     <dir name="lib">
                         <dir name="Trustly">
@@ -109,7 +109,7 @@
         </target>
         <target name="mageetc">
             <dir name="modules">
-                <file name="Trustly_Trustly.xml" hash="f1b375e9b2b81c89f37bd041b4762317"/>
+                <file name="Trustly_Trustly.xml" hash="65276cdb908021ff6c08b388c6a23457"/>
             </dir>
         </target>
         <target name="mageskin">

@@ -32,3 +32,5 @@
 "Trustly","Trustly"
 "Unable to set payment method.","Unable to set payment method."
 "What is Trustly?","What is Trustly?"
+"Use order currency", "Use order currency"
+"Use the currency the user has selected in the store when placing the order rather then the store base currency.", "Use the currency the user has selected in the store when placing the order rather then the store base currency."

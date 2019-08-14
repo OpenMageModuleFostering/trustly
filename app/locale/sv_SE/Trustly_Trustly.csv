@@ -32,3 +32,5 @@
 "Trustly", "Trustly"
 "Unable to set payment method.", "Kan inte aktivera betalningsmetoden"
 "What is Trustly?", "Vad är Trustly?"
+"Use order currency", "Använd orderns valuta"
+"Use the currency the user has selected in the store when placing the order rather then the store base currency.", "Använd valutan som användaren valt att se priserna i istället för butikens bas-valuta när ordern skapas."

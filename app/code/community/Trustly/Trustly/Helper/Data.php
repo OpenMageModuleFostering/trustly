@@ -200,4 +200,23 @@ class Trustly_Trustly_Helper_Data extends Mage_Core_Helper_Abstract
 	{
 		return (string) Mage::getConfig()->getNode()->modules->Trustly_Trustly->version;
 	}
+
+
+	public function getOrderAmount($order) {
+		if (Mage::getStoreConfigFlag('payment/trustly/ordercurrency') == '1') {
+			return number_format($order->getGrandTotal(), 2, '.', '');
+		} else {
+			return number_format($order->getBaseGrandTotal(), 2, '.', '');
+		}
+	}
+
+
+	public function getOrderCurrencyCode($order) {
+		if (Mage::getStoreConfigFlag('payment/trustly/ordercurrency') == '1') {
+			return $order->getOrderCurrencyCode();
+		} else {
+			return $order->getBaseCurrencyCode();
+		}
+	}
+
 }

@@ -76,7 +76,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			Mage::log("Got Trustly_SignatureException when communicating with Trustly: " . (string)$e, Zend_Log::DEBUG, self::LOG_FILE);
 			Mage::logException($e);
 			$redirectError = Mage::helper('trustly')->__("Cannot verify the authenticity of Trustly communication.");
-		} 
+		}
 
 		if (!isset($response)) {
 			Mage::log("No response from redirectProcess()", Zend_Log::DEBUG, self::LOG_FILE);
@@ -214,9 +214,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 			$_amount = $notification->getData('amount');
 			$_currency = $notification->getData('currency');
 
-			$_totalData = $order->getData();
-			$_grandTotal = $_totalData['base_grand_total'];
-			$_order_currency_code = $_totalData['base_currency_code'];
+			$_grandTotal = Mage::helper('trustly')->getOrderAmount($order);
+			$_order_currency_code = Mage::helper('trustly')->getOrderCurrencyCode($order);
 
 			$trustly_payment = NULL;
 			foreach ($order->getPaymentsCollection() as $_payment) {
@@ -372,8 +371,8 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 					Mage::log(sprintf("Recieved invalid payment for order %s, got amount %s %s", $incrementId, $_amount, $_currency), Zend_Log::WARN, self::LOG_FILE);
 
-					/* The response is wether or not the notification we 
-					 * recived and handled properly, not if we liked the 
+					/* The response is wether or not the notification we
+					 * recived and handled properly, not if we liked the
 					 * contents of it */
 					Mage::helper('trustly')->sendResponseNotification($notification, true);
 
@@ -395,11 +394,11 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 				$notification_transaction = $this->addChildTransaction($trustly_payment, $trustlyNotificationId, $trustlyOrderId,
 					Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE, true);
 
-				/* Lookup an invoice connected to this order with the amount we 
-				 * have gotten paid with, mark as paid, there should really be 
+				/* Lookup an invoice connected to this order with the amount we
+				 * have gotten paid with, mark as paid, there should really be
 				 * only one */
 				$open = Mage_Sales_Model_Order_Invoice::STATE_OPEN;
-				if ($order_invoice->getState() == $open && $order_invoice->getBaseGrandTotal() == $_amount) {
+				if ($order_invoice->getState() == $open && Mage::helper('trustly')->getOrderAmount($order_invoice) == $_amount) {
 					$trustly_payment->capture($order_invoice);
 					if ($order_invoice->getIsPaid()) {
 						$order_invoice->pay();
@@ -418,6 +417,13 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 						* so non-existance is cached. So... in this case,
 						* workaround by loading parent manually and close it. */
 
+				} else {
+					Mage::log(sprintf("Could not find an invoice to pay for order %s, amount %s %s. Order invoice is state: %s, amount: %s %s, base amount %s %s",
+							$incrementId, $_amount, $_currency,
+							$order_invoice->getState(),
+							$order_invoice->getGrandTotal(), $order_invoice->getOrderCurrencyCode(),
+							$order_invoice->getBaseGrandTotal(), $order_invoice->getBaseCurrencyCode()),
+						Zend_Log::WARN, self::LOG_FILE);
 				}
 
 				$orderStatus = Mage_Sales_Model_Order::STATE_PROCESSING;
@@ -439,7 +445,7 @@ class Trustly_Trustly_PaymentController extends Mage_Core_Controller_Front_Actio
 
 					/* Normally the only debit amount that should be received is 
 					 * the full amount, but you never know.... */
-				if ($order->getBaseGrandTotal() == $_amount) {
+				if ($order->getGrandTotal() == $_amount) {
 					$creditmemo = Mage::getModel('sales/service_order', $order)
 						->prepareCreditmemo()
 						->setPaymentRefundDisallowed(true)
