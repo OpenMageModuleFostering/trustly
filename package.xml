@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
     <name>Trustly</name>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
     <stability>stable</stability>
     <license uri="http://www.gnu.org/copyleft/gpl.html">GPL 3</license>
     <channel>community</channel>
@@ -16,8 +16,8 @@
             <email>info@trustly.com</email>
         </author>
     </authors>
-    <date>2014-07-01</date>
-    <time>17:16:21</time>
+    <date>2014-08-12</date>
+    <time>10:46:54</time>
     <contents>
         <target name="magelocale">
             <dir name="da_DK">
@@ -68,8 +68,8 @@
                         <file name="PaymentController.php" hash="dd2fa8f726bcb103379ba9e51944bf50"/>
                     </dir>
                     <dir name="etc">
-                        <file name="config.xml" hash="f91527dd2707b2d4ddac8594a28375ff"/>
-                        <file name="system.xml" hash="28993e0c9c79829b12cbcea209967be4"/>
+                        <file name="config.xml" hash="f4c625253bad0f96a18d9c0950b57b29"/>
+                        <file name="system.xml" hash="06764bda19eb06ade6dac239abc55aca"/>
                     </dir>
                     <dir name="lib">
                         <dir name="Trustly">
@@ -134,7 +134,7 @@
                         <dir name="template">
                             <dir name="trustly">
                                 <file name="form.phtml" hash="f37a2b86d35eea0a8cd6ec176d466424"/>
-                                <file name="iframe.phtml" hash="65aaad9584f8ba4344f3b836ca08c6de"/>
+                                <file name="iframe.phtml" hash="be80b2c6cf1d74f134624444447a7e8d"/>
                                 <file name="mark.phtml" hash="76011840449ff5067311d2f2987bdd7d"/>
                             </dir>
                         </dir>

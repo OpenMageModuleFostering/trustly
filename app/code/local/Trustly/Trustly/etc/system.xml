@@ -4,7 +4,7 @@
         <payment>
             <groups>
                 <trustly translate="label" module="trustly">
-                    <label>Trustly - Direct bank e-Payments</label>
+                    <label>Trustly - Direct banking</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>1</sort_order>
                     <show_in_default>1</show_in_default>
@@ -42,7 +42,7 @@
                             <frontend_type>text</frontend_type>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends><urltrustly>1</urltrustly></depends>
                         </merchantusername>
@@ -51,7 +51,7 @@
                             <frontend_type>password</frontend_type>
                             <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends><urltrustly>1</urltrustly></depends>
                         </merchantpassword>
@@ -61,7 +61,7 @@
                             <sort_order>125</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends><urltrustly>1</urltrustly></depends>
                         </merchantkey>
                         <merchantusernametest translate="label">
@@ -69,7 +69,7 @@
                             <frontend_type>text</frontend_type>
                             <sort_order>110</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends><urltrustly>0</urltrustly></depends>
                         </merchantusernametest>
@@ -78,7 +78,7 @@
                             <frontend_type>password</frontend_type>
                             <sort_order>120</sort_order>
                             <show_in_default>1</show_in_default>
-                            <show_in_website>0</show_in_website>
+                            <show_in_website>1</show_in_website>
                             <show_in_store>0</show_in_store>
                             <depends><urltrustly>0</urltrustly></depends>
                         </merchantpasswordtest>
@@ -88,7 +88,7 @@
                             <sort_order>125</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
+                            <show_in_store>0</show_in_store>
                             <depends><urltrustly>0</urltrustly></depends>
                         </merchantkeytest>
                         <sendmailorderconfirmation translate="label">
@@ -133,7 +133,7 @@
                             <sort_order>320</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
                             <frontend_class>validate-number</frontend_class>
                         </sort_order>
                     </fields>
