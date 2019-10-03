@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Trustly",
+    "name": "OpenMageModuleFostering\/Trustly",
     "type": "magento-module",
     "license": "GPL-3",
     "homepage": "",
     "description": "Magento module for integration of the Trustly payment method.",
     "authors": [
-    {
-        "name": "Trustly",
-        "email": "info@trustly.com"
-    }
-],
+        {
+            "name": "Trustly",
+            "email": "info@trustly.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
